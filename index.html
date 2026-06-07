@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prestige Suits</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c9a84c;--gold-light:#f0d89a;--dark:#1a1207;--dark2:#2d2010;
+  --cream:#f5f0eb;--white:#fff;--border:#e0d5c5;--muted:#7a6e5f;
+  --red:#c0392b;--green:#27ae60;--blue:#2980b9;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* ── UTILITIES ── */
+.hidden{display:none!important}
+.flex{display:flex}
+.gap-1{gap:.5rem}.gap-2{gap:1rem}
+.ml-auto{margin-left:auto}
+.text-muted{color:var(--muted)}
+.text-gold{color:var(--gold)}
+.text-center{text-align:center}
+.w-full{width:100%}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 18px;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.btn-dark{background:var(--dark);color:#fff}.btn-dark:hover{background:var(--dark2)}
+.btn-gold{background:var(--gold);color:var(--dark)}.btn-gold:hover{opacity:.88}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--dark)}.btn-outline:hover{border-color:#aaa;background:#f0ece6}
+.btn-danger{background:none;border:1px solid #e8c5c5;color:var(--red)}.btn-danger:hover{background:#fdf0f0}
+.btn-sm{padding:7px 13px;font-size:12px}
+.btn-lg{padding:14px 28px;font-size:15px}
+.btn-block{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── FORMS ── */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem}
+label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+input[type=text],input[type=email],input[type=number],input[type=password],input[type=date],select,textarea{
+  border:1px solid var(--border);border-radius:5px;padding:10px 13px;
+  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;
+  transition:border-color .2s;color:var(--dark);width:100%
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+textarea{resize:vertical;min-height:80px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid .full{grid-column:1/-1}
+.form-note{font-size:11px;color:var(--muted);margin-top:3px}
+.form-error{font-size:12px;color:var(--red);margin-top:4px}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-box{border:2px dashed var(--border);border-radius:8px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.img-upload-box:hover{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.img-upload-box.has-image{padding:0;border-style:solid}
+.img-upload-box img{width:100%;height:200px;object-fit:cover;border-radius:6px;display:block}
+.img-upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-placeholder i{font-size:2.5rem;color:var(--muted);opacity:.5;display:block;margin-bottom:.5rem}
+.img-upload-placeholder p{font-size:13px;color:var(--muted)}
+.img-change-btn{position:absolute;bottom:8px;right:8px;z-index:2}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--dark);color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;z-index:9999;opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{background:#7b1818}
+
+/* ── NAV ── */
+nav{background:var(--dark);height:62px;display:flex;align-items:center;padding:0 2rem;position:sticky;top:0;z-index:100;gap:2rem}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;letter-spacing:2px;white-space:nowrap}
+.nav-logo span{color:#fff;font-weight:300}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nav-link{background:none;border:none;color:#bfb09a;font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;cursor:pointer;border-radius:4px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-link.active{color:var(--gold);background:rgba(201,168,76,.1)}
+.cart-badge{background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ════════════════════════════════════════════
+   PAGES
+════════════════════════════════════════════ */
+.page{display:none;min-height:calc(100vh - 62px)}
+.page.active{display:block}
+
+/* ── STORE PAGE ── */
+.store-hero{background:var(--dark);padding:4.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+.store-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,168,76,.08) 0%,transparent 70%)}
+.store-hero-sub{color:var(--gold);letter-spacing:4px;font-size:11px;text-transform:uppercase;margin-bottom:.75rem}
+.store-hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:2.8rem;font-weight:400;position:relative}
+
+.suits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.5rem;padding:2rem}
+.suit-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default}
+.suit-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
+.suit-card-img{height:220px;background:#f0e8d8;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.suit-card-img img{width:100%;height:100%;object-fit:cover}
+.suit-card-img .no-img-icon{font-size:5rem;color:#ccc}
+.suit-card-body{padding:1.25rem}
+.suit-card-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;margin-bottom:4px}
+.suit-card-price{color:var(--gold);font-weight:500;font-size:1rem;margin-bottom:.5rem}
+.suit-card-meta{font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.8}
+.suit-card-actions{display:flex;gap:.5rem}
+
+/* ── CART PAGE ── */
+.cart-wrap{max-width:700px;margin:2rem auto;padding:0 1.5rem}
+.page-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;margin-bottom:1.5rem}
+.cart-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;gap:1rem;align-items:center;margin-bottom:.75rem}
+.cart-item-img{width:70px;height:70px;border-radius:6px;object-fit:cover;background:#f0e8d8;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cart-item-img img{width:100%;height:100%;object-fit:cover}
+.cart-item-img .placeholder-icon{font-size:1.8rem;color:#ccc}
+.cart-item-info{flex:1}
+.cart-item-name{font-family:'Playfair Display',serif;font-weight:600;margin-bottom:2px}
+.cart-item-sub{font-size:12px;color:var(--muted)}
+.cart-item-price{color:var(--gold);font-size:.95rem;margin-top:4px}
+.cart-item-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qty-btn{width:26px;height:26px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qty-btn:hover{background:var(--cream);border-color:#aaa}
+.qty-val{font-size:14px;font-weight:500;min-width:20px;text-align:center}
+
+.order-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-top:1.5rem}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.order-total-row{display:flex;justify-content:space-between;font-family:'Playfair Display',serif;font-size:1.25rem;padding:1rem 0;border-top:1px solid var(--border);margin-top:.75rem}
+.date-highlight{display:flex;align-items:center;gap:8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:6px;padding:8px 12px;margin-bottom:1rem}
+.date-highlight i{color:var(--gold)}
+.date-highlight span{font-size:12px;color:var(--muted)}
+
+/* ── ADMIN LOGIN ── */
+#page-login{display:none;align-items:center;justify-content:center;background:var(--dark);min-height:100vh}
+#page-login.active{display:flex}
+.login-card{background:#fff;border-radius:12px;padding:3rem 2.5rem;width:100%;max-width:400px}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--dark);text-align:center;margin-bottom:.5rem}
+.login-logo span{color:var(--gold)}
+.login-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:2rem}
+.login-error{background:#fdf0f0;border:1px solid #f5c5c5;border-radius:5px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:1rem;display:none}
+
+/* ── ADMIN LAYOUT ── */
+#page-admin{display:none}
+#page-admin.active{display:grid;grid-template-columns:230px 1fr}
+.admin-sidebar{background:var(--dark);min-height:calc(100vh - 62px);padding:1.5rem 1rem;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto}
+.sidebar-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#5a5044;padding:.5rem 10px;margin-top:1.5rem;margin-bottom:.25rem}
+.sidebar-btn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:#bfb09a;font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 12px;border-radius:5px;cursor:pointer;transition:all .2s;text-align:left}
+.sidebar-btn:hover{color:#fff;background:rgba(255,255,255,.07)}
+.sidebar-btn.active{color:var(--gold);background:rgba(201,168,76,.12)}
+.sidebar-btn i{font-size:17px;flex-shrink:0}
+
+.admin-main{padding:2rem;overflow-y:auto;background:var(--cream)}
+.admin-tab{display:none}
+.admin-tab.active{display:block}
+.admin-page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem}
+.admin-page-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.25rem}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:.5rem}
+.stat-value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:600}
+.stat-value.gold{color:var(--gold)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:13px}
+.data-table th{background:#f8f4ef;padding:11px 15px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border)}
+.data-table td{padding:12px 15px;border-bottom:1px solid #f0ece6;vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:#faf7f2}
+.table-img{width:44px;height:44px;object-fit:cover;border-radius:5px;background:#f0e8d8;display:flex;align-items:center;justify-content:center}
+.table-img img{width:44px;height:44px;object-fit:cover;border-radius:5px}
+.table-img .no-img{font-size:1.5rem}
+
+.badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-pending{background:#fff8e1;color:#b7791f}
+.badge-processing{background:#e3f2fd;color:#1565c0}
+.badge-delivered{background:#e8f5e9;color:#2e7d32}
+.badge-cancelled{background:#fdecea;color:#9b1c1c}
+
+/* ADD SUIT FORM */
+.form-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;max-width:780px}
+
+/* ── INVOICE MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none!important}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:720px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-body{overflow-y:auto;flex:1;padding:2.5rem}
+.modal-footer{padding:1rem 2.5rem;border-top:1px solid var(--border);background:#faf7f2;display:flex;justify-content:flex-end;gap:.75rem}
+
+/* INVOICE DESIGN */
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:1.5rem;border-bottom:2.5px solid var(--dark);margin-bottom:2rem}
+.inv-brand{font-family:'Playfair Display',serif;font-size:2rem;color:var(--dark)}
+.inv-brand span{color:var(--gold)}
+.inv-brand-sub{font-size:12px;color:var(--muted);line-height:1.8;margin-top:4px}
+.inv-meta{text-align:right;font-size:13px;color:var(--muted);line-height:2}
+.inv-no{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--dark)}
+.inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
+.inv-party h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.5rem}
+.inv-party p{font-size:13px;line-height:1.9;color:#333}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:13px}
+.inv-table th{background:var(--dark);color:var(--gold);padding:11px 14px;text-align:left;font-size:11px;letter-spacing:.5px}
+.inv-table th:last-child,.inv-table td:last-child{text-align:right}
+.inv-table td{padding:11px 14px;border-bottom:1px solid #f0ece6}
+.inv-table td img{width:36px;height:36px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px}
+.inv-totals{margin-left:auto;width:260px}
+.inv-total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f5f0e8}
+.inv-total-row.grand{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;border:none;padding-top:12px;margin-top:4px;border-top:2px solid var(--dark)}
+.inv-total-row.grand .amount{color:var(--gold)}
+.inv-footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.8}
+.inv-watermark{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--border);text-align:right;margin-top:1.5rem}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-state i{font-size:3rem;display:block;margin-bottom:1rem;opacity:.3}
+.empty-state p{font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="main-nav" class="hidden">
+  <div class="nav-logo">PRESTIGE <span>SUITS</span></div>
+  <div class="nav-links" id="store-nav-links">
+    <button class="nav-link active" onclick="showPage('store')"><i class="ti ti-hanger"></i> Store</button>
+    <button class="nav-link" onclick="showPage('cart')"><i class="ti ti-shopping-cart"></i> Cart <span class="cart-badge" id="cart-badge">0</span></button>
+  </div>
+  <div class="ml-auto" id="admin-nav-area">
+    <button class="nav-link" onclick="showPage('admin')" id="admin-nav-btn"><i class="ti ti-shield"></i> Admin</button>
+  </div>
+</nav>
+
+<!-- ══ PAGE: LOGIN ══ -->
+<div id="page-login" class="page">
+  <div class="login-card">
+    <div class="login-logo">PRESTIGE <span>SUITS</span></div>
+    <div class="login-sub">Admin Panel — Sign In</div>
+    <div class="login-error" id="login-error"><i class="ti ti-alert-circle"></i> Invalid username or password.</div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="admin" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-gold btn-block btn-lg mt-2" onclick="doLogin()" id="login-btn">
+      <i class="ti ti-login"></i> Sign In
+    </button>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn btn-outline btn-sm" onclick="showPage('store')"><i class="ti ti-arrow-left"></i> Back to Store</button>
+    </div>
+    <div style="text-align:center;margin-top:1rem;font-size:11px;color:var(--muted)">Default: admin / admin123</div>
+  </div>
+</div>
+
+<!-- ══ PAGE: STORE ══ -->
+<div id="page-store" class="page">
+  <div class="store-hero">
+    <div class="store-hero-sub">Bespoke Collection</div>
+    <h1>Crafted for the Discerning</h1>
+  </div>
+  <div id="suits-grid" class="suits-grid"></div>
+  <div id="store-empty" class="empty-state hidden">
+    <i class="ti ti-hanger"></i>
+    <p>No suits listed yet. Check back soon.</p>
+  </div>
+</div>
+
+<!-- ══ PAGE: CART ══ -->
+<div id="page-cart" class="page">
+  <div class="cart-wrap">
+    <br>
+    <div class="page-title">Your Cart</div>
+    <div id="cart-items-wrap"></div>
+    <div id="cart-empty" class="empty-state hidden">
+      <i class="ti ti-shopping-cart-off"></i>
+      <p>Your cart is empty.</p>
+      <button class="btn btn-dark mt-2" onclick="showPage('store')"><i class="ti ti-arrow-left"></i> Browse Suits</button>
+    </div>
+    <div id="cart-form-wrap" class="hidden">
+      <div class="order-card mt-2">
+        <div class="card-title">Customer Details</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="c-name" placeholder="Muhammad Ali"></div>
+          <div class="form-group"><label>Phone *</label><input type="text" id="c-phone" placeholder="+92 300 0000000"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="c-email" placeholder="ali@email.com"></div>
+          <div class="form-group">
+            <label>Order Date <span style="color:var(--gold)">★</span></label>
+            <input type="date" id="c-date">
+            <div class="form-note">Set any date — you can backdate this order</div>
+          </div>
+          <div class="form-group full"><label>Delivery Address *</label><input type="text" id="c-address" placeholder="House 12, Block B, Faisalabad"></div>
+        </div>
+        <div class="order-total-row">
+          <span>Grand Total <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif">(incl. 5% tax)</span></span>
+          <span id="cart-grand-total" style="color:var(--gold)">PKR 0</span>
+        </div>
+        <button class="btn btn-gold btn-block btn-lg" onclick="placeOrder()" style="margin-top:1rem">
+          <i class="ti ti-receipt"></i> Place Order & Generate Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: ADMIN ══ -->
+<div id="page-admin" class="page">
+  <div class="admin-sidebar">
+    <div class="sidebar-section">Overview</div>
+    <button class="sidebar-btn active" onclick="showAdminTab('dashboard')" id="sb-dashboard"><i class="ti ti-dashboard"></i> Dashboard</button>
+
+    <div class="sidebar-section">Products</div>
+    <button class="sidebar-btn" onclick="showAdminTab('add-suit')" id="sb-add-suit"><i class="ti ti-circle-plus"></i> Add Suit</button>
+    <button class="sidebar-btn" onclick="showAdminTab('manage-suits')" id="sb-manage-suits"><i class="ti ti-shirt"></i> Manage Suits</button>
+
+    <div class="sidebar-section">Sales</div>
+    <button class="sidebar-btn" onclick="showAdminTab('orders')" id="sb-orders"><i class="ti ti-clipboard-list"></i> Orders</button>
+
+    <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid #2d2010">
+      <button class="sidebar-btn" onclick="showPage('store')" style="color:#7a8a6a"><i class="ti ti-eye"></i> View Store</button>
+      <button class="sidebar-btn" onclick="doLogout()" style="color:#a06060"><i class="ti ti-logout"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- DASHBOARD -->
+    <div class="admin-tab active" id="tab-dashboard">
+      <div class="admin-page-header">
+        <div class="admin-page-title">Dashboard</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Suits</div><div class="stat-value" id="s-suits">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value" id="s-orders">—</div></div>
+        <div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-value gold" id="s-revenue">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="s-pending">—</div></div>
+      </div>
+      <div class="admin-page-title" style="font-size:1.1rem;margin-bottom:1rem">Recent Orders</div>
+      <table class="data-table"><thead><tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="dash-orders-body"></tbody></table>
+    </div>
+
+    <!-- ADD SUIT -->
+    <div class="admin-tab" id="tab-add-suit">
+      <div class="admin-page-header"><div class="admin-page-title">Add New Suit</div></div>
+      <div class="form-card">
+        <div class="form-group">
+          <label>Product Image</label>
+          <div class="img-upload-box" id="add-img-box">
+            <div class="img-upload-placeholder" id="add-img-placeholder">
+              <i class="ti ti-cloud-upload"></i>
+              <p>Click to upload product photo</p>
+              <p style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG up to 5MB</p>
+            </div>
+            <img id="add-img-preview" src="" alt="" style="display:none;width:100%;height:220px;object-fit:cover;border-radius:6px">
+            <input type="file" id="add-img-input" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="previewImage(this,'add-img-preview','add-img-placeholder','add-img-box')">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group full"><label>Suit Name *</label><input type="text" id="s-name" placeholder="e.g. Teal Floral Lawn 3-Piece"></div>
+          <div class="form-group"><label>Price (PKR) *</label><input type="number" id="s-price" placeholder="3500"></div>
+          <div class="form-group"><label>Style</label><select id="s-style">
+            <option>3-Piece Suit</option>
+            <option>2-Piece Suit</option>
+            <option>Slim Fit</option>
+            <option>Regular Fit</option>
+            <option>Relaxed Fit</option>
+            <option>Double Breasted</option>
+            <option>Tuxedo</option>
+          </select></div>
+          <div class="form-group"><label>Color</label><input type="text" id="s-color" placeholder="Teal Green / Floral"></div>
+          <div class="form-group"><label>Fabric</label><input type="text" id="s-fabric" placeholder="Premium Lawn"></div>
+          <div class="form-group"><label>Available Sizes</label><input type="text" id="s-sizes" placeholder="S, M, L, XL, XXL"></div>
+          <div class="form-group"><label>Stock Quantity</label><input type="number" id="s-stock" placeholder="10"></div>
+          <div class="form-group full"><label>Description</label><textarea id="s-desc" placeholder="Brief description of the suit..."></textarea></div>
+        </div>
+        <button class="btn btn-gold" onclick="addSuit()" id="add-suit-btn"><i class="ti ti-plus"></i> Add Suit to Store</button>
+      </div>
+    </div>
+
+    <!-- MANAGE SUITS -->
+    <div class="admin-tab" id="tab-manage-suits">
+      <div class="admin-page-header">
+        <div class="admin-page-title">Manage Suits</div>
+        <button class="btn btn-gold btn-sm" onclick="showAdminTab('add-suit')"><i class="ti ti-plus"></i> Add New</button>
+      </div>
+      <table class="data-table"><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Style</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody id="manage-suits-body"></tbody></table>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="admin-tab" id="tab-orders">
+      <div class="admin-page-header"><div class="admin-page-title">All Orders</div></div>
+      <table class="data-table"><thead><tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Invoice</th></tr></thead>
+      <tbody id="all-orders-body"></tbody></table>
+    </div>
+
+  </div><!-- /admin-main -->
+</div><!-- /page-admin -->
+
+<!-- ══ INVOICE MODAL ══ -->
+<div class="modal-overlay hidden" id="invoice-overlay" onclick="if(event.target===this)closeInvoice()">
+  <div class="modal">
+    <div class="modal-body" id="invoice-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeInvoice()"><i class="ti ti-x"></i> Close</button>
+      <button class="btn btn-dark" onclick="printInvoice()"><i class="ti ti-printer"></i> Print Invoice</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+const API = 'http://localhost:3001/api';
+let token = localStorage.getItem('ps_token') || null;
+let currentUser = localStorage.getItem('ps_user') || null;
+let cart = JSON.parse(localStorage.getItem('ps_cart') || '[]');
+let suits = [];
+let orders = [];
+let currentInvoice = null;
+
+// ── HELPER: get suit id (supports both _id and id) ───────────
+// MongoDB uses _id, so we normalise here
+function getSuitId(s) { return s._id || s.id; }
+function getOrderId(o) { return o._id || o.invoiceId || o.id; }
+function getInvoiceLabel(o) { return o.invoiceId || o.id || o._id; }
+
+// ── HELPER: build image URL ───────────────────────────────────
+function imgUrl(image) {
+  if (!image) return null;
+  if (image.startsWith('http')) return image;
+  return 'http://localhost:3001' + image;
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  if (token) {
+    try {
+      const r = await fetch(API+'/auth/verify', {headers:{Authorization:'Bearer '+token}});
+      if (!r.ok) throw new Error();
+    } catch { token = null; localStorage.removeItem('ps_token'); }
+  }
+  updateCartBadge();
+  document.getElementById('main-nav').classList.remove('hidden');
+  showPage('store');
+}
+
+// ── PAGE ROUTING ──────────────────────────────────────────────
+function showPage(p) {
+  if (p === 'admin' && !token) { showPage('login'); return; }
+  document.querySelectorAll('.page').forEach(x => { x.classList.remove('active'); });
+  document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
+  const pg = document.getElementById('page-'+p);
+  if (pg) pg.classList.add('active');
+  if (p === 'store') { document.querySelectorAll('.nav-link')[0].classList.add('active'); loadSuits(); }
+  if (p === 'cart')  { document.querySelectorAll('.nav-link')[1].classList.add('active'); renderCart(); }
+  if (p === 'admin') { loadAdmin(); }
+  if (p === 'login') {
+    document.getElementById('main-nav').classList.add('hidden');
+    pg.style.display = 'flex';
+  } else {
+    document.getElementById('main-nav').classList.remove('hidden');
+    const loginPg = document.getElementById('page-login');
+    loginPg.style.display = 'none';
+  }
+}
+
+// ── AUTH ──────────────────────────────────────────────────────
+async function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader-2"></i> Signing in...';
+  try {
+    const r = await fetch(API+'/auth/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const data = await r.json();
+    if (!r.ok) throw new Error();
+    token = data.token; currentUser = data.name;
+    localStorage.setItem('ps_token', token);
+    localStorage.setItem('ps_user', currentUser);
+    showPage('admin');
+  } catch {
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-login"></i> Sign In';
+}
+
+function doLogout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('ps_token'); localStorage.removeItem('ps_user');
+  showPage('store');
+}
+
+// ── STORE ─────────────────────────────────────────────────────
+async function loadSuits() {
+  try {
+    const r = await fetch(API+'/suits');
+    suits = await r.json();
+    renderStore();
+  } catch { showToast('Could not load suits — is the server running?', true); }
+}
+
+function renderStore() {
+  const grid = document.getElementById('suits-grid');
+  const empty = document.getElementById('store-empty');
+  if (!suits.length) { grid.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  grid.innerHTML = suits.map(s => {
+    const id = getSuitId(s);
+    const url = imgUrl(s.image);
+    return `
+    <div class="suit-card">
+      <div class="suit-card-img">
+        ${url
+          ? `<img src="${url}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''
+        }
+        <i class="ti ti-hanger no-img-icon" style="${url?'display:none':''}"></i>
+      </div>
+      <div class="suit-card-body">
+        <div class="suit-card-name">${s.name}</div>
+        <div class="suit-card-price">PKR ${s.price.toLocaleString()}</div>
+        <div class="suit-card-meta">
+          ${[s.color,s.style,s.fabric].filter(Boolean).join(' · ')}<br>
+          ${s.sizes ? 'Sizes: '+s.sizes : ''} · Stock: ${s.stock}
+        </div>
+        <div class="suit-card-actions">
+          <button class="btn btn-dark btn-sm" style="flex:1" onclick="addToCart('${id}')" ${s.stock<1?'disabled':''}>
+            <i class="ti ti-shopping-cart"></i> ${s.stock<1?'Out of Stock':'Add to Cart'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── CART ──────────────────────────────────────────────────────
+function addToCart(id) {
+  const s = suits.find(x => getSuitId(x) === id);
+  if (!s) return;
+  const ex = cart.find(x => x.cartId === id);
+  if (ex) ex.qty = (ex.qty||1)+1;
+  else cart.push({...s, cartId: id, qty:1});
+  saveCart(); updateCartBadge();
+  showToast(s.name+' added to cart');
+}
+function removeFromCart(cartId) { cart = cart.filter(x => x.cartId !== cartId); saveCart(); renderCart(); }
+function changeQty(cartId, delta) {
+  const it = cart.find(x => x.cartId === cartId);
+  if (!it) return;
+  it.qty = Math.max(1, (it.qty||1)+delta);
+  saveCart(); renderCart();
+}
+function saveCart() { localStorage.setItem('ps_cart', JSON.stringify(cart)); }
+function updateCartBadge() {
+  const n = cart.reduce((a,x)=>a+(x.qty||1),0);
+  document.getElementById('cart-badge').textContent = n;
+}
+
+function renderCart() {
+  const wrap = document.getElementById('cart-items-wrap');
+  const empty = document.getElementById('cart-empty');
+  const form = document.getElementById('cart-form-wrap');
+  const today = new Date().toISOString().split('T')[0];
+  if (!document.getElementById('c-date').value) document.getElementById('c-date').value = today;
+
+  if (!cart.length) { wrap.innerHTML=''; empty.classList.remove('hidden'); form.classList.add('hidden'); return; }
+  empty.classList.add('hidden'); form.classList.remove('hidden');
+
+  const subtotal = cart.reduce((a,x)=>a+x.price*(x.qty||1),0);
+  const tax = Math.round(subtotal*0.05);
+  const grand = subtotal+tax;
+  document.getElementById('cart-grand-total').textContent = 'PKR '+grand.toLocaleString();
+
+  wrap.innerHTML = cart.map(x => {
+    const url = imgUrl(x.image);
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        ${url
+          ? `<img src="${url}" alt="${x.name}">`
+          : '<i class="ti ti-hanger placeholder-icon"></i>'
+        }
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${x.name}</div>
+        <div class="cart-item-sub">${[x.style,x.fabric].filter(Boolean).join(' · ')}</div>
+        <div class="cart-item-price">PKR ${(x.price*(x.qty||1)).toLocaleString()}</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="changeQty('${x.cartId}',-1)">−</button>
+          <span class="qty-val">${x.qty||1}</span>
+          <button class="qty-btn" onclick="changeQty('${x.cartId}',1)">+</button>
+          <button class="btn btn-danger btn-sm" onclick="removeFromCart('${x.cartId}')" style="margin-left:8px"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function placeOrder() {
+  const name = document.getElementById('c-name').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const date = document.getElementById('c-date').value;
+  const address = document.getElementById('c-address').value.trim();
+  if (!name||!phone||!date||!address) { showToast('Please fill all required fields', true); return; }
+
+  const items = cart.map(x=>({
+    id: x.cartId,
+    name: x.name,
+    price: x.price,
+    qty: x.qty||1,
+    style: x.style,
+    image: x.image
+  }));
+  try {
+    const r = await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customer:{name,phone,email,address},items,date})});
+    const order = await r.json();
+    if (!r.ok) throw new Error(order.error);
+    cart = []; saveCart(); updateCartBadge();
+    showToast('Order placed! Invoice ready.');
+    currentInvoice = order;
+    setTimeout(()=>{ showInvoiceModal(order); }, 400);
+  } catch(e) { showToast(e.message||'Error placing order', true); }
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────
+async function loadAdmin() {
+  await Promise.all([loadAdminSuits(), loadAdminOrders(), loadStats()]);
+  renderDashboard();
+}
+async function loadAdminSuits() {
+  const r = await fetch(API+'/suits'); suits = await r.json();
+}
+async function loadAdminOrders() {
+  const r = await fetch(API+'/orders',{headers:{Authorization:'Bearer '+token}});
+  orders = await r.json();
+}
+async function loadStats() {
+  const r = await fetch(API+'/stats',{headers:{Authorization:'Bearer '+token}});
+  const s = await r.json();
+  document.getElementById('s-suits').textContent = s.totalSuits;
+  document.getElementById('s-orders').textContent = s.totalOrders;
+  document.getElementById('s-revenue').textContent = 'PKR '+(s.revenue||0).toLocaleString();
+  document.getElementById('s-pending').textContent = s.pending;
+}
+
+function showAdminTab(t) {
+  document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('sb-'+t).classList.add('active');
+  if (t==='manage-suits') renderManageSuits();
+  if (t==='orders') renderAllOrders();
+  if (t==='dashboard') { loadStats(); renderDashboard(); }
+}
+
+function renderDashboard() {
+  const tbody = document.getElementById('dash-orders-body');
+  if (!orders.length) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No orders yet</td></tr>'; return; }
+  tbody.innerHTML = orders.slice(0,8).map(o=>`
+    <tr>
+      <td><strong>${getInvoiceLabel(o)}</strong></td>
+      <td>${o.customer.name}</td>
+      <td>${o.date}</td>
+      <td>PKR ${o.total.toLocaleString()}</td>
+      <td><span class="badge badge-${o.status.toLowerCase()}">${o.status}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='showInvoiceModal(${JSON.stringify(o)})'><i class="ti ti-file-invoice"></i> View</button></td>
+    </tr>`).join('');
+}
+
+function renderManageSuits() {
+  const tbody = document.getElementById('manage-suits-body');
+  if (!suits.length) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No suits yet</td></tr>'; return; }
+  tbody.innerHTML = suits.map(s=>{
+    const id = getSuitId(s);
+    const url = imgUrl(s.image);
+    return `
+    <tr>
+      <td>
+        <div class="table-img">
+          ${url
+            ? `<img src="${url}" alt="${s.name}">`
+            : '<span class="no-img">🤵</span>'
+          }
+        </div>
+      </td>
+      <td><strong>${s.name}</strong><br><span class="text-muted" style="font-size:11px">${s.color||''}</span></td>
+      <td>PKR ${s.price.toLocaleString()}</td>
+      <td>${s.style||'—'}</td>
+      <td>${s.stock}</td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="deleteSuit('${id}')"><i class="ti ti-trash"></i> Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAllOrders() {
+  const tbody = document.getElementById('all-orders-body');
+  if (!orders.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No orders yet</td></tr>'; return; }
+  tbody.innerHTML = orders.map(o=>{
+    const oid = getOrderId(o);
+    return `
+    <tr>
+      <td><strong>${getInvoiceLabel(o)}</strong></td>
+      <td>${o.customer.name}</td>
+      <td>${o.date}</td>
+      <td>${o.items.length} item(s)</td>
+      <td>PKR ${o.total.toLocaleString()}</td>
+      <td>
+        <select onchange="updateOrderStatus('${oid}',this.value)" style="padding:5px 8px;font-size:12px;border-color:var(--border);border-radius:4px">
+          ${['Pending','Processing','Delivered','Cancelled'].map(st=>`<option ${o.status===st?'selected':''}>${st}</option>`).join('')}
+        </select>
+      </td>
+      <td><button class="btn btn-outline btn-sm" onclick='showInvoiceModal(${JSON.stringify(o)})'><i class="ti ti-file-invoice"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── SUIT CRUD ─────────────────────────────────────────────────
+async function addSuit() {
+  const name = document.getElementById('s-name').value.trim();
+  const price = document.getElementById('s-price').value;
+  if (!name||!price) { showToast('Name and price are required', true); return; }
+  const fd = new FormData();
+  fd.append('name', name);
+  fd.append('price', price);
+  fd.append('color', document.getElementById('s-color').value);
+  fd.append('style', document.getElementById('s-style').value);
+  fd.append('fabric', document.getElementById('s-fabric').value);
+  fd.append('sizes', document.getElementById('s-sizes').value);
+  fd.append('stock', document.getElementById('s-stock').value||0);
+  fd.append('desc', document.getElementById('s-desc').value);
+  const imgInput = document.getElementById('add-img-input');
+  if (imgInput.files[0]) fd.append('image', imgInput.files[0]);
+
+  const btn = document.getElementById('add-suit-btn');
+  btn.disabled=true; btn.innerHTML='<i class="ti ti-loader-2"></i> Saving...';
+  try {
+    const r = await fetch(API+'/suits',{method:'POST',headers:{Authorization:'Bearer '+token},body:fd});
+    if (!r.ok) throw new Error();
+    const s = await r.json();
+    suits.push(s);
+    // Reset form
+    ['s-name','s-price','s-color','s-fabric','s-sizes','s-stock','s-desc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('add-img-input').value='';
+    document.getElementById('add-img-preview').style.display='none';
+    document.getElementById('add-img-placeholder').style.display='block';
+    showToast(name+' added to store!');
+    await loadStats();
+    showAdminTab('manage-suits');
+  } catch { showToast('Error adding suit', true); }
+  btn.disabled=false; btn.innerHTML='<i class="ti ti-plus"></i> Add Suit to Store';
+}
+
+async function deleteSuit(id) {
+  if (!confirm('Remove this suit from the store?')) return;
+  try {
+    await fetch(API+'/suits/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+    suits = suits.filter(x => getSuitId(x) !== id);
+    renderManageSuits(); loadStats();
+    showToast('Suit removed');
+  } catch { showToast('Error deleting suit', true); }
+}
+
+async function updateOrderStatus(id, status) {
+  try {
+    await fetch(API+'/orders/'+id+'/status',{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({status})});
+    const o = orders.find(x => getOrderId(x) === id);
+    if (o) o.status = status;
+    loadStats();
+  } catch { showToast('Error updating status', true); }
+}
+
+// ── IMAGE PREVIEW ─────────────────────────────────────────────
+function previewImage(input, previewId, placeholderId, boxId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById(previewId);
+    const placeholder = document.getElementById(placeholderId);
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── INVOICE ───────────────────────────────────────────────────
+function showInvoiceModal(order) {
+  currentInvoice = order;
+  const BASE = 'http://localhost:3001';
+  document.getElementById('invoice-body').innerHTML = `
+    <div class="inv-header">
+      <div>
+        <div class="inv-brand">PRESTIGE <span>SUITS</span></div>
+        <div class="inv-brand-sub">Premium Tailored Clothing<br>Main Bazaar, Faisalabad, Punjab, Pakistan<br>suits@prestige.pk · +92 41 000 0000</div>
+      </div>
+      <div class="inv-meta">
+        <div class="inv-no">${getInvoiceLabel(order)}</div>
+        Order Date: <strong style="color:var(--dark)">${order.date}</strong><br>
+        Issued: ${new Date(order.createdAt).toLocaleDateString('en-PK',{day:'2-digit',month:'long',year:'numeric'})}<br>
+        Status: <span class="badge badge-${order.status.toLowerCase()}">${order.status}</span>
+      </div>
+    </div>
+    <div class="inv-parties">
+      <div class="inv-party">
+        <h4>Bill To</h4>
+        <p><strong>${order.customer.name}</strong><br>${order.customer.phone}<br>${order.customer.email||''}<br>${order.customer.address}</p>
+      </div>
+      <div class="inv-party">
+        <h4>From</h4>
+        <p><strong>Prestige Suits</strong><br>Main Bazaar, Faisalabad<br>+92 41 000 0000<br>suits@prestige.pk</p>
+      </div>
+    </div>
+    <table class="inv-table">
+      <thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+      <tbody>
+        ${order.items.map((it,i)=>{
+          const url = imgUrl(it.image);
+          return `
+          <tr>
+            <td>${i+1}</td>
+            <td>${url?`<img src="${url}" alt="">`:''}<strong>${it.name}</strong>${it.style?` <span style="color:var(--muted);font-size:11px">· ${it.style}</span>`:''}</td>
+            <td>${it.qty||1}</td>
+            <td>PKR ${it.price.toLocaleString()}</td>
+            <td>PKR ${(it.price*(it.qty||1)).toLocaleString()}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end">
+      <div class="inv-totals">
+        <div class="inv-total-row"><span>Subtotal</span><span>PKR ${order.subtotal.toLocaleString()}</span></div>
+        <div class="inv-total-row"><span>Tax (5%)</span><span>PKR ${order.tax.toLocaleString()}</span></div>
+        <div class="inv-total-row grand"><span>Grand Total</span><span class="amount">PKR ${order.total.toLocaleString()}</span></div>
+      </div>
+    </div>
+    <div class="inv-footer">
+      Thank you for choosing Prestige Suits &nbsp;·&nbsp; All sales final &nbsp;·&nbsp; Returns within 7 days with receipt
+    </div>
+    <div class="inv-watermark">PRESTIGE SUITS · EST. 2024</div>`;
+  document.getElementById('invoice-overlay').classList.remove('hidden');
+}
+function closeInvoice() { document.getElementById('invoice-overlay').classList.add('hidden'); }
+
+function printInvoice() {
+  if (!currentInvoice) return;
+  const o = currentInvoice;
+  const BASE = 'http://localhost:3001';
+  const w = window.open('','_blank','width=820,height=960');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${getInvoiceLabel(o)} — Prestige Suits</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+  *{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;padding:2.5rem;color:#1a1207;font-size:13px}
+  .inv-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:1.5rem;border-bottom:2.5px solid #1a1207;margin-bottom:2rem}
+  .inv-brand{font-family:'Playfair Display',serif;font-size:2rem;color:#1a1207}.inv-brand span{color:#c9a84c}
+  .inv-brand-sub{font-size:11px;color:#7a6e5f;line-height:1.8;margin-top:4px}
+  .inv-meta{text-align:right;font-size:12px;color:#7a6e5f;line-height:2}
+  .inv-no{font-family:'Playfair Display',serif;font-size:1.1rem;color:#1a1207}
+  .inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
+  .inv-party h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#7a6e5f;margin-bottom:.5rem}
+  .inv-party p{font-size:13px;line-height:1.9;color:#333}
+  table{width:100%;border-collapse:collapse;margin-bottom:1.5rem}
+  th{background:#1a1207;color:#c9a84c;padding:10px 14px;text-align:left;font-size:11px}
+  th:last-child,td:last-child{text-align:right}
+  td{padding:10px 14px;border-bottom:1px solid #f0ece6;font-size:13px}
+  td img{width:32px;height:32px;object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:6px}
+  .totals{margin-left:auto;width:250px}
+  .trow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f0e8}
+  .grand{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;border:none;padding-top:10px;margin-top:4px;border-top:2px solid #1a1207}
+  .grand .a{color:#c9a84c}
+  footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #e0d5c5;font-size:11px;color:#7a6e5f;text-align:center}
+  </style></head><body>
+  <div class="inv-header">
+    <div><div class="inv-brand">PRESTIGE <span>SUITS</span></div>
+    <div class="inv-brand-sub">Premium Tailored Clothing<br>Main Bazaar, Faisalabad, Punjab, Pakistan</div></div>
+    <div class="inv-meta"><div class="inv-no">${getInvoiceLabel(o)}</div>Order Date: <strong>${o.date}</strong><br>Issued: ${new Date(o.createdAt).toLocaleDateString()}<br>Status: ${o.status}</div>
+  </div>
+  <div class="inv-parties">
+    <div class="inv-party"><h4>Bill To</h4><p><strong>${o.customer.name}</strong><br>${o.customer.phone}<br>${o.customer.email||''}<br>${o.customer.address}</p></div>
+    <div class="inv-party"><h4>From</h4><p><strong>Prestige Suits</strong><br>Main Bazaar, Faisalabad<br>+92 41 000 0000<br>suits@prestige.pk</p></div>
+  </div>
+  <table><thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead><tbody>
+    ${o.items.map((it,i)=>{
+      const url = it.image ? (it.image.startsWith('http') ? it.image : BASE+it.image) : null;
+      return `<tr><td>${i+1}</td><td>${url?`<img src="${url}" alt="">`:''}<strong>${it.name}</strong></td><td>${it.qty||1}</td><td>PKR ${it.price.toLocaleString()}</td><td>PKR ${(it.price*(it.qty||1)).toLocaleString()}</td></tr>`;
+    }).join('')}
+  </tbody></table>
+  <div style="display:flex;justify-content:flex-end">
+    <div class="totals">
+      <div class="trow"><span>Subtotal</span><span>PKR ${o.subtotal.toLocaleString()}</span></div>
+      <div class="trow"><span>Tax (5%)</span><span>PKR ${o.tax.toLocaleString()}</span></div>
+      <div class="trow grand"><span>Grand Total</span><span class="a">PKR ${o.total.toLocaleString()}</span></div>
+    </div>
+  </div>
+  <footer>Thank you for choosing Prestige Suits · All sales final · Returns within 7 days</footer>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
