@@ -1,0 +1,23 @@
+# render.yaml — Drop this in your backend repo root.
+# Render will auto-detect it and configure the service.
+
+services:
+  - type: web
+    name: prestige-suits-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: MONGO_URI
+        sync: false          # fill in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false          # your Netlify URL

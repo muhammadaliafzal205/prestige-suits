@@ -5,24 +5,46 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-const fs = require('fs');
 const mongoose = require('mongoose');
+const { v2: cloudinary } = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 require('dotenv').config();
+
+// ══════════════════════════════════════════════════════════════
+// CLOUDINARY CONFIG
+// ══════════════════════════════════════════════════════════════
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // ══════════════════════════════════════════════════════════════
 // MONGODB CONNECTION
 // ══════════════════════════════════════════════════════════════
-mongoose.connect(process.env.MONGO_URI)
-const PORT = process.env.PORT || 3001;
+mongoose.connect(process.env.MONGO_URI);
+
+const PORT       = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'prestige_suits_secret_2024';
 
 const app = express();
 
-
 // ── Middleware ────────────────────────────────────────────────
-app.use(cors({ origin: '*' }));
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL, 'http://localhost:3000', 'http://localhost:5500', 'http://127.0.0.1:5500']
+  : ['*'];
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no origin (Postman, curl, mobile apps)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, '../frontend/public/uploads')));
 
 // ══════════════════════════════════════════════════════════════
 // MONGOOSE SCHEMAS & MODELS
@@ -36,11 +58,11 @@ const suitSchema = new mongoose.Schema({
   sizes:  { type: String, default: 'S,M,L,XL' },
   stock:  { type: Number, default: 0 },
   desc:   { type: String, default: '' },
-  image:  { type: String, default: null },
+  image:  { type: String, default: null },  // stores full Cloudinary URL
 }, { timestamps: true });
 
 const orderSchema = new mongoose.Schema({
-  invoiceId: { type: String, unique: true }, // e.g. INV-1001
+  invoiceId: { type: String, unique: true },
   customer: {
     name:    String,
     phone:   String,
@@ -81,24 +103,23 @@ async function seedSuits() {
 }
 mongoose.connection.once('open', seedSuits);
 
-// ── Admin user (hardcoded, no DB needed) ─────────────────────
+// ── Admin user (hardcoded) ────────────────────────────────────
 const admin = {
   username:     'admin',
   passwordHash: bcrypt.hashSync('admin123', 10),
   name:         'Store Manager',
 };
 
-// ── Multer setup ──────────────────────────────────────────────
-const uploadDir = path.join(__dirname, '../frontend/public/uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename:    (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `suit-${uuidv4()}${ext}`);
+// ── Multer + Cloudinary storage ───────────────────────────────
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:         'prestige-suits',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 900, height: 900, crop: 'limit', quality: 'auto' }],
   },
 });
+
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -140,7 +161,6 @@ app.get('/api/auth/verify', authMiddleware, (req, res) => {
 // SUITS ROUTES
 // ══════════════════════════════════════════════════════════════
 
-// GET all suits (public)
 app.get('/api/suits', async (req, res) => {
   try {
     const suits = await Suit.find().sort({ createdAt: -1 });
@@ -150,7 +170,6 @@ app.get('/api/suits', async (req, res) => {
   }
 });
 
-// POST create suit (admin)
 app.post('/api/suits', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { name, price, color, style, fabric, sizes, stock, desc } = req.body;
@@ -165,7 +184,8 @@ app.post('/api/suits', authMiddleware, upload.single('image'), async (req, res) 
       sizes:  sizes  || 'S,M,L,XL',
       stock:  parseInt(stock) || 0,
       desc:   desc   || '',
-      image:  req.file ? `/uploads/${req.file.filename}` : null,
+      // Cloudinary returns a full https URL in req.file.path
+      image:  req.file ? req.file.path : null,
     });
     res.status(201).json(suit);
   } catch (err) {
@@ -173,7 +193,6 @@ app.post('/api/suits', authMiddleware, upload.single('image'), async (req, res) 
   }
 });
 
-// PUT update suit (admin)
 app.put('/api/suits/:id', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { name, price, color, style, fabric, sizes, stock, desc } = req.body;
@@ -187,7 +206,7 @@ app.put('/api/suits/:id', authMiddleware, upload.single('image'), async (req, re
     if (sizes  !== undefined) updates.sizes  = sizes;
     if (stock  !== undefined) updates.stock  = parseInt(stock);
     if (desc   !== undefined) updates.desc   = desc;
-    if (req.file)             updates.image  = `/uploads/${req.file.filename}`;
+    if (req.file)             updates.image  = req.file.path; // full Cloudinary URL
 
     const suit = await Suit.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!suit) return res.status(404).json({ error: 'Not found' });
@@ -197,16 +216,18 @@ app.put('/api/suits/:id', authMiddleware, upload.single('image'), async (req, re
   }
 });
 
-// DELETE suit (admin)
 app.delete('/api/suits/:id', authMiddleware, async (req, res) => {
   try {
     const suit = await Suit.findByIdAndDelete(req.params.id);
     if (!suit) return res.status(404).json({ error: 'Not found' });
 
-    // Delete image file if exists
+    // Delete image from Cloudinary if it exists
     if (suit.image) {
-      const filePath = path.join(__dirname, '../frontend/public', suit.image);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      // Extract public_id from the URL, e.g. "prestige-suits/abc123"
+      const urlParts = suit.image.split('/');
+      const filename = urlParts[urlParts.length - 1].split('.')[0];
+      const folder   = urlParts[urlParts.length - 2];
+      await cloudinary.uploader.destroy(`${folder}/${filename}`).catch(() => {});
     }
     res.json({ success: true });
   } catch (err) {
@@ -218,7 +239,6 @@ app.delete('/api/suits/:id', authMiddleware, async (req, res) => {
 // ORDERS ROUTES
 // ══════════════════════════════════════════════════════════════
 
-// GET all orders (admin)
 app.get('/api/orders', authMiddleware, async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -228,7 +248,6 @@ app.get('/api/orders', authMiddleware, async (req, res) => {
   }
 });
 
-// POST create order (public)
 app.post('/api/orders', async (req, res) => {
   try {
     const { customer, items, date } = req.body;
@@ -240,7 +259,6 @@ app.post('/api/orders', async (req, res) => {
     const tax      = Math.round(subtotal * 0.05);
     const total    = subtotal + tax;
 
-    // Auto-generate invoice number from order count
     const orderCount = await Order.countDocuments();
     const invoiceId  = `INV-${1001 + orderCount}`;
 
@@ -260,7 +278,6 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-// PUT update order status (admin)
 app.put('/api/orders/:id/status', authMiddleware, async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
@@ -298,4 +315,7 @@ app.get('/api/stats', authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`✅  Prestige Suits API running on http://localhost:${PORT}`));
+// Health check (Render pings this to keep the service alive)
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+app.listen(PORT, () => console.log(`✅  Prestige Suits API running on port ${PORT}`));

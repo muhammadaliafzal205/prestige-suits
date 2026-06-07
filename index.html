@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prestige Suits</title>
+<!-- ✅ Set your Render backend URL here after deploying -->
+<!-- <script>window.BACKEND_URL = 'https://YOUR-APP.onrender.com';</script> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -411,7 +413,12 @@ nav{background:var(--dark);height:62px;display:flex;align-items:center;padding:0
      JAVASCRIPT
 ══════════════════════════════════════════════════════════ -->
 <script>
-const API = 'http://localhost:3001/api';
+// ── CONFIGURATION ─────────────────────────────────────────────
+// Change this to your Render backend URL after deploying.
+// e.g. 'https://prestige-suits-api.onrender.com/api'
+const API = window.BACKEND_URL
+  ? window.BACKEND_URL + '/api'
+  : 'http://localhost:3001/api';
 let token = localStorage.getItem('ps_token') || null;
 let currentUser = localStorage.getItem('ps_user') || null;
 let cart = JSON.parse(localStorage.getItem('ps_cart') || '[]');
@@ -426,10 +433,13 @@ function getOrderId(o) { return o._id || o.invoiceId || o.id; }
 function getInvoiceLabel(o) { return o.invoiceId || o.id || o._id; }
 
 // ── HELPER: build image URL ───────────────────────────────────
+// Cloudinary images are full https:// URLs — just return them as-is.
+// Local dev relative paths still get the backend base prepended.
 function imgUrl(image) {
   if (!image) return null;
-  if (image.startsWith('http')) return image;
-  return 'http://localhost:3001' + image;
+  if (image.startsWith('http')) return image;  // Cloudinary / absolute
+  const base = window.BACKEND_URL || 'http://localhost:3001';
+  return base + image;
 }
 
 // ── INIT ──────────────────────────────────────────────────────
@@ -793,7 +803,7 @@ function previewImage(input, previewId, placeholderId, boxId) {
 // ── INVOICE ───────────────────────────────────────────────────
 function showInvoiceModal(order) {
   currentInvoice = order;
-  const BASE = 'http://localhost:3001';
+  const BASE = window.BACKEND_URL || 'http://localhost:3001';
   document.getElementById('invoice-body').innerHTML = `
     <div class="inv-header">
       <div>
@@ -851,7 +861,7 @@ function closeInvoice() { document.getElementById('invoice-overlay').classList.a
 function printInvoice() {
   if (!currentInvoice) return;
   const o = currentInvoice;
-  const BASE = 'http://localhost:3001';
+  const BASE = window.BACKEND_URL || 'http://localhost:3001';
   const w = window.open('','_blank','width=820,height=960');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${getInvoiceLabel(o)} — Prestige Suits</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">

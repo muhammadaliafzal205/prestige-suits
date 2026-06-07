@@ -1,0 +1,9 @@
+# netlify.toml — Drop this in your frontend folder (same folder as index.html)
+
+[build]
+  publish = "."          # publish the current folder (index.html is at root)
+
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
